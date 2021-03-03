@@ -28,7 +28,7 @@ source "${OPERATOR_REPO}"/.github/bin/oauth-provision.sh
 trap "catchFinish" EXIT SIGINT
 
 runTest() {
-  deployEclipseCheOlm
+  deployChe
   createWorkspace
   waitWorkspaceStart
 }

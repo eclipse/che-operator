@@ -171,10 +171,9 @@ deployEclipseChe() {
     --templates ${templates}
 }
 
-deployEclipseCheOlm() {
+deployChe() {
   chectl server:deploy \
     --platform=openshift \
-    --installer=olm \
     --chenamespace=${NAMESPACE} \
     --telemetry=off
 }
