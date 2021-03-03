@@ -172,10 +172,7 @@ deployEclipseChe() {
 }
 
 deployChe() {
-  chectl server:deploy \
-    --platform=openshift \
-    --chenamespace=${NAMESPACE} \
-    --telemetry=off
+  chectl server:deploy  --telemetry=off --workspace-engine=dev-workspace
 }
 
 waitEclipseCheDeployed() {
