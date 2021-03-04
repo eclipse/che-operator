@@ -29,8 +29,6 @@ trap "catchFinish" EXIT SIGINT
 
 runTest() {
   deployChe
-  createWorkspace
-  waitWorkspaceStart
 }
 
 initDefaults
