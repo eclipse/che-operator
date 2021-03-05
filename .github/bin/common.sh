@@ -171,10 +171,6 @@ deployEclipseChe() {
     --templates ${templates}
 }
 
-deployChe() {
-  chectl server:deploy  --telemetry=off --workspace-engine=dev-workspace --platform=openshift --installer=operator
-}
-
 waitEclipseCheDeployed() {
   local version=$1
   export n=0

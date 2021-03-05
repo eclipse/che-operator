@@ -21,14 +21,39 @@ set -o pipefail
 set -u
 
 export OPERATOR_REPO=$(dirname $(dirname $(readlink -f "$0")));
-source "${OPERATOR_REPO}"/.github/bin/common.sh
-source "${OPERATOR_REPO}"/.github/bin/oauth-provision.sh
+export DEVWORKSPACE_PROJECT=devworkspace-project
 
 # Stop execution on any error
 trap "catchFinish" EXIT SIGINT
 
+deployChe() {
+  chectl server:deploy  --telemetry=off --workspace-engine=dev-workspace --platform=openshift --installer=operator
+}
+
 runTest() {
   deployChe
+
+  oc new-project $devworkspace_project
+  sleep 10
+
+  kubectl apply -f https://raw.githubusercontent.com/devfile/devworkspace-operator/main/samples/flattened_theia-next.yaml
+
+  echo 'Wait pod readyness'
+  export n=0
+  until
+    if [ $n -gt 300 ]
+    then
+     echo "Failed to start workspace"
+     exit 1
+    fi
+
+	  wsname=$(oc get pods -n $devworkspace_project | grep workspace | awk '{print $1}')
+    oc get pod $wsname -n $devworkspace_project | grep -m 1 "Running"
+  do
+    oc get pod $wsname -n devworkspace-controller
+    sleep 5
+    n=$(( n+5 ))
+  done
 }
 
 initDefaults
