@@ -35,7 +35,7 @@ deployChe() {
 runTest() {
   deployChe
 
-  oc new-project $devworkspace_project
+  oc new-project $DEVWORKSPACE_PROJECT
   sleep 10
 
   kubectl apply -f https://raw.githubusercontent.com/devfile/devworkspace-operator/main/samples/flattened_theia-next.yaml
@@ -49,8 +49,8 @@ runTest() {
      exit 1
     fi
 
-	  wsname=$(oc get pods -n $devworkspace_project | grep workspace | awk '{print $1}')
-    oc get pod $wsname -n $devworkspace_project | grep -m 1 "Running"
+	  wsname=$(oc get pods -n $DEVWORKSPACE_PROJECT | grep workspace | awk '{print $1}')
+    oc get pod $wsname -n $DEVWORKSPACE_PROJECT | grep -m 1 "Running"
   do
     oc get pod $wsname -n devworkspace-controller
     sleep 5
