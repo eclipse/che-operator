@@ -29,7 +29,7 @@ source "${OPERATOR_REPO}"/.github/bin/oauth-provision.sh
 trap "catchFinish" EXIT SIGINT
 
 deployChe() {
-  chectl server:deploy  --telemetry=off --workspace-engine=dev-workspace --platform=openshift --installer=operator
+  chectl server:deploy  --telemetry=off --workspace-engine=dev-workspace --platform=openshift --installer=operator --batch
 }
 
 runTest() {
