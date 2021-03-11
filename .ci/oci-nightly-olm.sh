@@ -36,16 +36,11 @@ runTest() {
   deployChe
 
   export n=0
+  export wsname=devworkspace-webhook-server
   until
     if [ $n -gt 300 ]
     then
      echo "Failed to start workspace"
-     # Get logs from 'devworkspace-webhook-server' pod
-     wsname=$(oc get pods -n devworkspace-controller | grep devworkspace-webhook-server | awk '{print $1}')
-     oc logs $wsname
-     echo "Get logs from previous devworkspace-webhook-server pod"
-     oc  logs -p $wsname
-
      exit 1
     fi
 
@@ -64,6 +59,7 @@ runTest() {
 
   echo 'Wait pod readyness'
   export n=0
+  export wsname=workspace
   until
     if [ $n -gt 300 ]
     then
