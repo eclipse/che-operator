@@ -21,7 +21,6 @@ set -o pipefail
 set -u
 
 export OPERATOR_REPO=$(dirname $(dirname $(readlink -f "$0")));
-# export DEVWORKSPACE_PROJECT=devworkspace-project
 source "${OPERATOR_REPO}"/.github/bin/common.sh
 source "${OPERATOR_REPO}"/.github/bin/oauth-provision.sh
 
@@ -36,6 +35,8 @@ runTest() {
   deployChe
   waitDevWorkspaceControllerStarted
   createWorkspaceDevWorkspaceController
+  # Something wrong with checking devworkspace-webhook-server pod readiness. Wait for 2 min before workspace creation
+  sleep 120
   waitWorkspaceStartedDevWorkspaceController
 }
 
