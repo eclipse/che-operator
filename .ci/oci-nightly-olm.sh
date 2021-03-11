@@ -35,6 +35,21 @@ deployChe() {
 runTest() {
   deployChe
 
+  until
+    if [ $n -gt 300 ]
+    then
+     echo "Failed to start workspace"
+     exit 1
+    fi
+
+	  wsname=$(oc get pods -n devworkspace-controller | grep devworkspace-webhook-server | awk '{print $1}')
+    oc get pod $wsname -n devworkspace-controller | grep -m 1 "Running"
+  do
+    oc get pod $wsname -n devworkspace-controller
+    sleep 5
+    n=$(( n+5 ))
+  done
+
   oc new-project $DEVWORKSPACE_PROJECT
   sleep 10
 
@@ -52,6 +67,7 @@ runTest() {
 	  wsname=$(oc get pods -n $DEVWORKSPACE_PROJECT | grep workspace | awk '{print $1}')
     oc get pod $wsname -n $DEVWORKSPACE_PROJECT | grep -m 1 "Running"
   do
+    oc get pod $wsname -n $DEVWORKSPACE_PROJECT
     oc get pod $wsname -n devworkspace-controller
     sleep 5
     n=$(( n+5 ))
