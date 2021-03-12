@@ -35,9 +35,9 @@ runTest() {
   deployChe
   waitDevWorkspaceControllerStarted
   createWorkspaceDevWorkspaceController
-  # Something wrong with checking devworkspace-webhook-server pod readiness. Wait for 2 min before workspace creation
-  sleep 120
-  waitWorkspaceStartedDevWorkspaceController
+
+  sleep 240
+  waitWorkspaceStartedDevWorkspaceController 
 }
 
 initDefaults
