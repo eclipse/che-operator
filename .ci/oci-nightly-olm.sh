@@ -40,11 +40,12 @@ runTest() {
   createWorkspaceDevWorkspaceController
   waitWorkspaceStartedDevWorkspaceController 
   sleep 120
-  oc get pods
+  oc get pods -n ${NAMESPACE}
+  oc get routes -n ${NAMESPACE}
 
   # patch pod.yaml 
   ECLIPSE_CHE_URL=http://$(oc get route -n "${NAMESPACE}" che -o jsonpath='{.status.ingress[0].host}')
-  TS_SELENIUM_DEVWORKSPACE_URL="https://$(oc get route | grep theia/ | awk '{print $2}')/theia/"
+  TS_SELENIUM_DEVWORKSPACE_URL="https://$(oc get route -n "${NAMESPACE}" | grep theia/ | awk '{print $2}')/theia/"
   sed -i "s@CHE_URL@${ECLIPSE_CHE_URL}@g" happy-path-pod.yaml
   sed -i "s@WORKSPACE_ROUTE@${TS_SELENIUM_DEVWORKSPACE_URL}@g" happy-path-pod.yaml
   cat happy-path-pod.yaml
