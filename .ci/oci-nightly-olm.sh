@@ -34,10 +34,42 @@ deployChe() {
 runTest() {
   deployChe
   waitDevWorkspaceControllerStarted
-  createWorkspaceDevWorkspaceController
 
-  sleep 240
+  # wait for 2 min for devworkspace-controller ready to work.
+  sleep 120
+  createWorkspaceDevWorkspaceController
   waitWorkspaceStartedDevWorkspaceController 
+  sleep 120
+  oc get pods
+
+  # patch pod.yaml 
+  ECLIPSE_CHE_URL=http://$(oc get route -n "${NAMESPACE}" che -o jsonpath='{.status.ingress[0].host}')
+  TS_SELENIUM_DEVWORKSPACE_URL="https://$(oc get route | grep theia/ | awk '{print $2}')/theia/"
+  sed -i "s@CHE_URL@${ECLIPSE_CHE_URL}@g" happy-path-pod.yaml
+  sed -i "s@WORKSPACE_ROUTE@${TS_SELENIUM_DEVWORKSPACE_URL}@g" happy-path-pod.yaml
+  cat happy-path-pod.yaml
+
+  oc apply -f happy-path-pod.yaml
+  # wait for the pod to start
+  while true; do
+    sleep 3
+    PHASE=$(oc get pod -n ${NAMESPACE} happy-path-che \
+        --template='{{ .status.phase }}')
+    if [[ ${PHASE} == "Running" ]]; then
+        break
+    fi
+  done
+
+  # wait for the test to finish
+  oc logs -n ${NAMESPACE} happy-path-che -c happy-path-test -f
+
+  # just to sleep
+  sleep 3
+
+  # download the test results
+  mkdir -p tmp/
+  oc rsync -n ${NAMESPACE} happy-path-che:/tmp/e2e/report/ tmp/ -c download-reports
+  oc exec -n ${NAMESPACE} happy-path-che -c download-reports -- touch /tmp/done
 }
 
 initDefaults
