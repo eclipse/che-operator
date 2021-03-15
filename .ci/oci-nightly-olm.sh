@@ -43,7 +43,13 @@ runTest() {
   oc get pods -n ${NAMESPACE}
   oc get routes -n ${NAMESPACE}
 
+  wsname=$(oc get pods  | grep workspace | awk '{print $1}')
+  oc logs $wsname -c theia-ide
+  oc logs $wsname -c terminal
+  oc get events -n ${NAMESPACE}
+
   # patch pod.yaml 
+  wget https://gist.githubusercontent.com/SkorikSergey/3ce0000301d122b6a41782a98229ccc3/raw/0ef3858a21fbae844b1e0f691dee25a3b1fbe8ce/happy-path-pod.yaml
   ECLIPSE_CHE_URL=http://$(oc get route -n "${NAMESPACE}" che -o jsonpath='{.status.ingress[0].host}')
   TS_SELENIUM_DEVWORKSPACE_URL="https://$(oc get route -n "${NAMESPACE}" | grep theia/ | awk '{print $2}')/theia/"
   sed -i "s@CHE_URL@${ECLIPSE_CHE_URL}@g" happy-path-pod.yaml
